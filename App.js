@@ -7,6 +7,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MenuScreen from './components/MenuScreen';
 import HomeScreen from './components/HomeScreen';
 import Login from './components/Login';
+import Detail from './components/Details';
+import Favorite from './components/Favorite';
 
 export default function App() {
   return (
@@ -16,23 +18,13 @@ export default function App() {
   );
 }
 
-const DetailScreen = () => {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Detail Screen</Text>
-    </View>
-  )
-}
-
 const MyStack = () => {
   const Stack = createStackNavigator();
   return (
-    <Stack.Navigator screenOptions={headerStyle = { backgroundColor: 'black' }} >
-
-      <Stack.Screen name="Top" component={MyBottomTabs} />
-      <Stack.Screen name="Details" component={DetailScreen} />
+    <Stack.Navigator screenOptions={{ headerStyle: { backgroundColor: 'red' } }} >
+      <Stack.Screen name="Top" component={MyBottomTabs} options={{ headerShown: false }}/>
+      <Stack.Screen name="Details" component={Detail} />
     </Stack.Navigator>
-
   )
 }
 
@@ -40,11 +32,10 @@ const MyBottomTabs = () => {
   const Tabs = createBottomTabNavigator();
   return (
     <Tabs.Navigator>
-      <Tabs.Screen name="Home" component={HomeScreen} options={{ headershown: false }} />
+      <Tabs.Screen name="Home" component={HomeScreen} />
       <Tabs.Screen name="Menu" component={MenuScreen} />
+      <Tabs.Screen name="Favorite" component={Favorite} />
       <Tabs.Screen name="Login" component={Login} />
-
     </Tabs.Navigator>
   )
-
 }
