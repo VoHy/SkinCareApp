@@ -7,7 +7,7 @@ import { TextInput, Button } from "react-native-paper";
 //Redux
 // import { useDispatch, useSelector } from "react-redux";
 //Action
-import { EditInfo } from "../../reducers";
+// import { EditInfo } from "../../reducers";
 //Loader
 // import Loader from "../../components/Loaders/Loader";
 

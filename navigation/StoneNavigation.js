@@ -15,10 +15,10 @@ import Colors from '../utils/Colors';
 // import CustomDrawer from './CustomDrawer';
 // import CustomText from '../components/UI/CustomText';
 // Auth Screens
-import { AuthScreen } from '../screens/AuthScreen';
+import { AuthScreen } from '../screens/AuthScreen/AuthScreen';
 // import { IntroScreen } from '../screens/IntroScreen';
-import { SignupScreen } from '../screens/SignupScreen';
-import { LoginScreen } from '../screens/LoginScreen';
+import { SignupScreen } from '../screens/SignupScreen/SignupScreen';
+import { LoginScreen } from '../screens/LoginScreen/LoginScreen';
 // import { TouchIdScreen } from '../screens/TouchIdScreen';
 
 // Reset Screens
@@ -27,14 +27,14 @@ import { LoginScreen } from '../screens/LoginScreen';
 // import { FinishResetPwScreen } from '../screens/FinishResetPwScreen';
 
 // Home Screens
-import { HomeScreen } from '../screens/HomeScreen';
+import { HomeScreen } from '../screens/HomeScreen/HomeScreen';
 // import { ContactScreen } from '../screens/ContactScreen';
 
 //Product Screens
-import { CartScreen } from '../screens/CartScreen';
-import { DetailScreen } from '../screens/DetailScreen';
-import { FavoriteScreen } from '../screens/FavoriteScreen';
-import { ProductScreen } from '../screens/ProductScreen';
+import { CartScreen } from '../screens/CartScreen/CartScreen';
+import { DetailScreen } from '../screens/DetailScreen/DetailScreen';
+import { FavoriteScreen } from '../screens/FavoriteScreen/FavoriteScreen';
+import { ProductScreen } from '../screens/ProductScreen/ProductScreen';
 // // Order Screens
 // import { OrderScreen } from '../screens/OrderScreen';
 // import { PreOrderScreen } from '../screens/PreOrderScreen';
@@ -42,8 +42,8 @@ import { ProductScreen } from '../screens/ProductScreen';
 // import { AddCreditCardScreen } from '../screens/PaymentScreen';
 // import { FinishOrderScreen } from '../screens/FinishOrderScreen';
 // Profile Screens
-import { ProfileScreen } from '../screens/ProfileScreen';
-import { EditProfileScreen } from '../screens/ProfileScreen';
+import { ProfileScreen } from '../screens/ProfileScreen/ProfileScreen';
+import { EditProfileScreen } from '../screens/ProfileScreen/EditProfileScreen';
 // redux
 import { useSelector } from 'react-redux';
 

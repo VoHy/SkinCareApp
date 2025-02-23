@@ -5,11 +5,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector, useDispatch } from 'react-redux';
 // import { fetchProducts } from '../../reducers';
 //Colors
-// import Colors from '../../utils/Colors';
+import Colors from '../../utils/Colors';
 //Animation
 import Animated from 'react-native-reanimated';
 //Components
-import { Carousel, Header, CategorySection, FloatButton, categories } from './components';
+import { categories } from './components/Categories';
 // import Skeleton from '../../components/Loaders/SkeletonLoading';
 // import Snackbar from '../../components/Notification/Snackbar';
 //FloatButton

@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 // import { fetchFavorite } from "../../reducers";
 //Component
 // import { Header, FavoriteBody } from "./components";
-// import Colors from "../../utils/Colors";
+import Colors from "../../utils/Colors";
 //Loader
 // import SkeletonLoadingCart from "../../components/Loaders/SkeletonLoadingCart";
 

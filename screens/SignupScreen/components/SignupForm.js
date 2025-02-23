@@ -13,7 +13,7 @@ import {
   Dimensions,
 } from "react-native";
 //Colors
-// import Colors from "../../../utils/Colors";
+import Colors from '../../../utils/Colors';
 // import CustomText from "../../../components/UI/CustomText";
 import { Ionicons } from "@expo/vector-icons";
 //Redux
@@ -22,7 +22,7 @@ import { useDispatch, useSelector } from "react-redux";
 // import { SignUp as SignUpAct } from "../../../reducers";
 //PropTypes check
 import PropTypes from "prop-types";
-import renderField from "./RenderField";
+// import renderField from "./RenderField";
 
 const { width, height } = Dimensions.get("window");
 

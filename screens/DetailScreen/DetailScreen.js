@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Dimensions, Animated } from 'react-native';
 //Color
-// import Colors from '../../utils/Colors';
+import Colors from '../../utils/Colors';
 //Redux
 import { useSelector } from 'react-redux';
 //Components
 // import Snackbar from '../../components/Notification/Snackbar';
-import {
-  Header,
-  DetailBody,
-  ActionButton,
-  ModalComp,
-  Comments,
-} from './components';
+// import {
+//   Header,
+//   DetailBody,
+//   ActionButton,
+//   ModalComp,
+//   Comments,
+// } from './components';
 import { colorCheck } from '../../utils/Tools';
 
 export const DetailScreen = (props) => {

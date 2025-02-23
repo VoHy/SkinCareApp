@@ -8,7 +8,7 @@ import {
   Image,
   Dimensions,
 } from "react-native";
-// import Colors from "../../../utils/Colors";
+import Colors from "../../../utils/Colors";
 //Icon
 import LottieView from "lottie-react-native";
 //PropTypes check
@@ -21,17 +21,17 @@ export const AuthBody = ({ navigation }) => {
     <>
       <ImageBackground
         style={{ flex: 1, position: "absolute", height, width }}
-        source={require("../../../assets/Images/flower3.jpg")}
+        // source={require("../../../assets/Images/flower3.jpg")}
         blurRadius={10}
       ></ImageBackground>
       <View style={{ position: "absolute", top: 100 }}>
         <Image
           style={styles.logo}
-          source={require("../../../assets/Images/logo1.png")}
+          // source={require("../../../assets/Images/logo1.png")}
         />
       </View>
       <LottieView
-        source={require("../../../components/IconAnimation/welcome.json")}
+        // source={require("../../../components/IconAnimation/welcome.json")}
         autoPlay
         loop
         resizeMode='contain'

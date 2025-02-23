@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { AuthBody } from "./components";
+import { AuthBody } from "./components/AuthBody";
 
 export const AuthScreen = ({ navigation }) => {
   return (

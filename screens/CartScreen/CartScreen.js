@@ -5,8 +5,8 @@ import { View, StyleSheet, Platform, Dimensions } from 'react-native';
 //Action
 // import { fetchCart } from '../../reducers';
 //component
-// import Colors from '../../utils/Colors';
-import { Header, CartBody, TotalButton } from './components';
+import Colors from '../../utils/Colors';
+// import { Header, CartBody, TotalButton } from './components/';
 //Loader
 // import Loader from '../../components/Loaders/Loader';
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet, Dimensions, ImageBackground } from "react-native";
 //Components
-import { SignupForm } from "./components";
+import { SignupForm } from "./components/SignupForm";
 
 const { height, width } = Dimensions.get("window");
 
@@ -10,7 +10,7 @@ export const SignupScreen = ({ navigation }) => {
     <View style={styles.container}>
       <ImageBackground
         style={{ flex: 1, position: "absolute", height, width }}
-        source={require("../../assets/Images/flower3.jpg")}
+        // source={require("../../assets/Images/flower3.jpg")}
         blurRadius={10}
       ></ImageBackground>
       <SignupForm navigation={navigation} />

@@ -1,6 +1,5 @@
 import React from "react";
 import { View, StyleSheet, ImageBackground, Dimensions } from "react-native";
-import Colors from "../../utils/Colors";
 //Components
 // import { LoginForm } from "./components";
 
