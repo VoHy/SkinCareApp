@@ -1,60 +1,36 @@
-import 'react-native-gesture-handler';
-import React, { useState } from 'react';
-// Redux
-import { createStore, combineReducers, applyMiddleware } from 'redux';
-import { Provider } from 'react-redux';
-import ReduxThunk from 'redux-thunk';
-
-// Reducers
-import {
-  authReducer,
-  cartReducer,
-  favoriteReducer,
-  orderReducer,
-  productReducer,
-} from './src/reducers';
-
-// Navigator
-import { AppNavigator } from './src/navigation';
-
-import AppLoading from 'expo-app-loading';
-import { Asset } from 'expo-asset';
-import * as Font from 'expo-font';
-
 import { StatusBar } from 'expo-status-bar';
-
-// Notification
-import LocalNotication from './components/Notification/LocalNotification';
-
-// ✅ Tạo store
-const rootReducer = combineReducers({
-  auth: authReducer,
-  cart: cartReducer,
-  favorite: favoriteReducer,
-  order: orderReducer,
-  product: productReducer,
-});
-
-const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
+import { StyleSheet, Text, View } from 'react-native';
+import * as React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import MenuScreen from './components/MenuScreen';
+import HomeScreen from './components/HomeScreen';
 
 export default function App() {
-  const [assetLoaded, setAssetLoaded] = useState(false);
-
-  if (!assetLoaded) {
-    return (
-      <AppLoading
-        startAsync={LoadAssets}
-        onFinish={() => setAssetLoaded(true)}
-        onError={console.warn}
-      />
-    );
-  }
-
   return (
-    <Provider store={store}>
-      <StatusBar />
-      <LocalNotication />
-      <AppNavigator />
-    </Provider>
+    <NavigationContainer>
+      <MyStack />
+    </NavigationContainer>
   );
+}
+
+const MyStack = () => {
+  const Stack = createStackNavigator();
+  return (
+    <Stack.Navigator screenOptions={{ headerStyle: { backgroundColor: 'red' } }} >
+      <Stack.Screen name="Top" component={MyBottomTabs} options={{ headerShown: false }}/>
+      <Stack.Screen name="Home" component={HomeScreen} />
+    </Stack.Navigator>
+  )
+}
+
+const MyBottomTabs = () => {
+  const Tabs = createBottomTabNavigator();
+  return (
+    <Tabs.Navigator>
+      <Tabs.Screen name="Home" component={HomeScreen} />
+      <Tabs.Screen name="Menu" component={MenuScreen} />
+    </Tabs.Navigator>
+  )
 }
