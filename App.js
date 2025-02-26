@@ -1,14 +1,13 @@
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import MenuScreen from './components/MenuScreen';
 import HomeScreen from './components/HomeScreen';
 import Detail from './components/Details';
 import Favorite from './components/Favorite';
+import Login from './components/Login';
 
 
 
@@ -39,8 +38,8 @@ const MyBottomTabs = () => {
           let iconName;
           if (route.name === 'Home') {
             iconName = 'home';
-          } else if (route.name === 'Menu') {
-            iconName = 'menu';
+          } else if (route.name === 'Login') {
+            iconName = 'login';
           }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
@@ -49,7 +48,7 @@ const MyBottomTabs = () => {
       })}
     >
       <Tabs.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
-      <Tabs.Screen name="Menu" component={MenuScreen} />
+      <Tabs.Screen name="Login" component={Login} options={{ headerShown: false }} />
       {/* <Tabs.Screen name="Favorite" component={Favorite} /> */}
     </Tabs.Navigator>
   )

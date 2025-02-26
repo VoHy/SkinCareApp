@@ -4,6 +4,7 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 export default function HomeScreen() {
     const navigation = useNavigation();
@@ -12,7 +13,17 @@ export default function HomeScreen() {
     const [favorites, setFavorites] = useState({});
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
-    const [category, setCategory] = useState('');
+    const [category, setCategory] = useState(null);
+    
+    // Dropdown State
+    const [open, setOpen] = useState(false);
+    const [categories, setCategories] = useState([
+        { label: 'Tất cả', value: '' },
+        { label: 'Serum', value: 'serum' },
+        { label: 'Kem dưỡng', value: 'cream' },
+        { label: 'Mặt nạ', value: 'mask' },
+        { label: 'Nước hoa', value: 'perfume' },
+    ]);
 
     // Fetch Data
     const fetchData = async () => {
@@ -28,41 +39,8 @@ export default function HomeScreen() {
         }
     };
 
-    // Load favorites when screen is focused
-    useFocusEffect(
-        useCallback(() => {
-            const loadFavorites = async () => {
-                try {
-                    const storedFavorites = await AsyncStorage.getItem('favorites');
-                    setFavorites(storedFavorites ? JSON.parse(storedFavorites) : {});
-                } catch (error) {
-                    console.error("Error loading favorites:", error);
-                }
-            };
-            loadFavorites();
-        }, [])
-    );
-
-    // Load initial data & favorites
     useEffect(() => {
-        const loadData = async () => {
-            try {
-                const storedData = await AsyncStorage.getItem('artData');
-                if (storedData) {
-                    const parsedData = JSON.parse(storedData);
-                    setData(parsedData);
-                    setFilteredData(parsedData);
-                } else {
-                    fetchData();
-                }
-            } catch (error) {
-                console.error("Error loading stored data:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        loadData();
+        fetchData();
     }, []);
 
     // Toggle Favorite
@@ -87,7 +65,7 @@ export default function HomeScreen() {
             filtered = filtered.filter(item => item.artName.toLowerCase().includes(search.toLowerCase()));
         }
         
-        if (category) { 
+        if (category) {
             filtered = filtered.filter(item => item.category.toLowerCase() === category.toLowerCase());
         }
 
@@ -132,13 +110,26 @@ export default function HomeScreen() {
                 <Image source={{ uri: 'https://your-logo-url.com/logo.png' }} style={styles.logo} />
                 <TextInput
                     style={styles.searchInput}
-                    placeholder="Search..."
+                    placeholder="Tìm kiếm sản phẩm..."
                     value={search}
                     onChangeText={setSearch}
                 />
-                <TouchableOpacity onPress={() => setCategory(category ? '' : 'serum')}>
-                    <Text style={[styles.filterButton, category && styles.activeFilter]}>Serum</Text>
-                </TouchableOpacity>
+            </View>
+
+            {/* Dropdown Picker */}
+            <View style={styles.dropdownContainer}>
+                <DropDownPicker
+                    open={open}
+                    value={category}
+                    items={categories}
+                    setOpen={setOpen}
+                    setValue={setCategory}
+                    setItems={setCategories}
+                    placeholder="Chọn danh mục"
+                    containerStyle={{ width: '100%' }}
+                    style={styles.dropdown}
+                    dropDownStyle={{ backgroundColor: '#fafafa' }}
+                />
             </View>
 
             <FlatList
@@ -162,8 +153,10 @@ const styles = StyleSheet.create({
     header: { flexDirection: 'row', alignItems: 'center', padding: 10, backgroundColor: '#f8f8f8', borderBottomWidth: 1, borderBottomColor: '#ddd' },
     logo: { width: 50, height: 50, marginRight: 10 },
     searchInput: { flex: 1, height: 40, backgroundColor: '#fff', borderRadius: 10, paddingHorizontal: 10, borderWidth: 1, borderColor: '#ddd' },
-    filterButton: { marginLeft: 10, paddingVertical: 5, paddingHorizontal: 10, backgroundColor: '#ddd', borderRadius: 5 },
-    activeFilter: { backgroundColor: '#ff6347', color: 'white' },
+
+    // Dropdown styles
+    dropdownContainer: { marginVertical: 10 },
+    dropdown: { backgroundColor: '#fafafa', borderWidth: 1, borderColor: '#ddd' },
 
     // Item styles
     itemContainer: { flex: 1, margin: 8, maxWidth: '48%', alignItems: 'center', backgroundColor: '#f9f9f9', borderRadius: 10, padding: 10 },
