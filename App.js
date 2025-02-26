@@ -35,7 +35,7 @@ const MyBottomTabs = () => {
       <Tabs.Screen name="Home" component={HomeScreen} />
       <Tabs.Screen name="Menu" component={MenuScreen} />
       <Tabs.Screen name="Favorite" component={Favorite} />
-      <Tabs.Screen name="Login" component={Login} />
+      {/* <Tabs.Screen name="Login" component={Login} /> */}
     </Tabs.Navigator>
   )
 }

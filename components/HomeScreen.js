@@ -11,7 +11,6 @@ export default function HomeScreen() {
     const [favorites, setFavorites] = useState({});
     const [loading, setLoading] = useState(true);
 
-    // Fetch data from API
     const fetchData = async () => {
         try {
             const response = await axios.get('https://6417c990cc5fd8ffb1768cd3.mockapi.io/art');

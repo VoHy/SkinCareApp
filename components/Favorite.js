@@ -47,7 +47,7 @@ export default function Favorite() {
     <View style={styles.container}>
       <FlatList
         data={favorites}
-        keyExtractor={(item) => String(item.id)}
+        keyExtractor={(item) => item.id ? String(item.id) : Math.random().toString()}
         renderItem={({ item }) => (
           <View style={styles.itemContainer}>
             <Image source={{ uri: item.image }} style={styles.image} />
