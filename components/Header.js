@@ -1,8 +1,15 @@
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import React, { useState } from 'react';
+import { View, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default function Header({ onSearch, onFilterPress }) {
+    const [searchText, setSearchText] = useState("");
+
+    const handleChangeText = (text) => {
+        setSearchText(text);
+        onSearch(text);
+    };
+
     return (
         <View style={styles.header}>
             {/* Logo */}
@@ -14,13 +21,19 @@ export default function Header({ onSearch, onFilterPress }) {
                 <TextInput
                     style={styles.searchInput}
                     placeholder="Tìm kiếm sản phẩm..."
-                    onChangeText={onSearch}
+                    value={searchText}
+                    onChangeText={handleChangeText}
                 />
+                {searchText.length > 0 && (
+                    <TouchableOpacity onPress={() => handleChangeText("")}>
+                        <Icon name="times-circle" size={18} color="#888" style={styles.clearIcon} />
+                    </TouchableOpacity>
+                )}
             </View>
 
             {/* Nút bộ lọc */}
             <TouchableOpacity style={styles.filterButton} onPress={onFilterPress}>
-                <Icon name="filter" size={20} color="#fff" />
+                <Icon name="sliders" size={20} color="#fff" />
             </TouchableOpacity>
         </View>
     );
@@ -32,7 +45,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         backgroundColor: '#FF6F61',
-        padding: 10,
+        padding: 10, 
+        
     },
     logo: {
         width: 100,
@@ -54,6 +68,9 @@ const styles = StyleSheet.create({
     searchInput: {
         flex: 1,
         height: 40,
+    },
+    clearIcon: {
+        marginLeft: 8,
     },
     filterButton: {
         backgroundColor: '#444',
