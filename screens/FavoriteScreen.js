@@ -1,71 +1,66 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { useIsFocused } from '@react-navigation/native';
+import React, { useState, useCallback } from "react";
+import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Icon from "react-native-vector-icons/FontAwesome";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function FavoriteScreen() {
     const [favorites, setFavorites] = useState([]);
-    const isFocused = useIsFocused(); // Kiểm tra màn hình có đang được hiển thị
 
-    // Load danh sách sản phẩm yêu thích khi màn hình được focus
-    useEffect(() => {
-        if (isFocused) {
+    // Load favorites khi màn hình được focus
+    useFocusEffect(
+        useCallback(() => {
+            const loadFavorites = async () => {
+                try {
+                    const storedFavorites = await AsyncStorage.getItem("favorites");
+                    setFavorites(storedFavorites ? JSON.parse(storedFavorites) : []);
+                } catch (error) {
+                    console.error("Error loading favorites:", error);
+                }
+            };
             loadFavorites();
-        }
-    }, [isFocused]);
+        }, [])
+    );
 
-    const loadFavorites = async () => {
-        try {
-            const storedFavorites = await AsyncStorage.getItem('favorites');
-            const parsedFavorites = storedFavorites ? JSON.parse(storedFavorites) : [];
-            setFavorites(Array.isArray(parsedFavorites) ? parsedFavorites : []);
-        } catch (error) {
-            console.error('Error loading favorites:', error);
-            setFavorites([]);
-        }
-    };
-
-    const removeFavorite = async (id) => {
-        const updatedFavorites = favorites.filter(item => item.id !== id);
-        setFavorites(updatedFavorites);
-        await AsyncStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+    // Toggle Favorite (Xóa khỏi danh sách yêu thích)
+    const toggleFavorite = async (item) => {
+        setFavorites((prevFavorites) => {
+            let updatedFavorites = prevFavorites.filter((fav) => fav.id !== item.id);
+            AsyncStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+            return updatedFavorites;
+        });
     };
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Sản phẩm yêu thích</Text>
-            {favorites.length === 0 ? (
-                <Text style={styles.emptyText}>Chưa có sản phẩm yêu thích</Text>
-            ) : (
-                <FlatList
-                    data={favorites}
-                    keyExtractor={(item) => String(item.id)}
-                    renderItem={({ item }) => (
-                        <View style={styles.itemContainer}>
-                            <Image source={{ uri: item.image }} style={styles.image} />
-                            <View style={styles.info}>
-                                <Text style={styles.name}>{item.name}</Text>
-                                <Text style={styles.price}>{item.price}đ</Text>
-                            </View>
-                            <TouchableOpacity onPress={() => removeFavorite(item.id)}>
-                                <Icon name="trash" size={24} color="red" />
-                            </TouchableOpacity>
+            <FlatList
+                data={favorites}
+                keyExtractor={(item) => (item.id ? item.id.toString() : Math.random().toString())}
+                renderItem={({ item }) => (
+                    <View style={styles.itemContainer}>
+                        <Image source={item.image} style={styles.image} />
+                        <View style={styles.textContainer}>
+                            <Text style={styles.name}>{item.name}</Text>
+                            <Text style={styles.price}>{item.price}$</Text>
                         </View>
-                    )}
-                />
-            )}
+                        <TouchableOpacity onPress={() => toggleFavorite(item)} style={styles.favoriteButton}>
+                            <Icon name="heart" size={24} color="red" />
+                        </TouchableOpacity>
+                    </View>
+                )}
+                ListEmptyComponent={<Text style={styles.emptyText}>No favorites yet!</Text>}
+            />
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#fff', padding: 16 },
-    title: { fontSize: 22, fontWeight: 'bold', marginBottom: 10, textAlign: 'center' },
-    emptyText: { textAlign: 'center', fontSize: 16, color: 'gray' },
-    itemContainer: { flexDirection: 'row', alignItems: 'center', padding: 10, borderBottomWidth: 1, borderColor: '#ddd' },
-    image: { width: 50, height: 50, borderRadius: 10, marginRight: 10 },
-    info: { flex: 1 },
-    name: { fontSize: 16, fontWeight: 'bold' },
-    price: { fontSize: 14, color: 'gray' },
+    container: { flex: 1, backgroundColor: "#fff", padding: 10 },
+    itemContainer: { flexDirection: "row", alignItems: "center", backgroundColor: "#f9f9f9", borderRadius: 10, padding: 10, marginVertical: 5 },
+    textContainer: { flex: 1, marginLeft: 10 },
+    image: { width: 80, height: 80, borderRadius: 10 },
+    name: { fontSize: 16, fontWeight: "bold" },
+    price: { fontSize: 14, color: "gray" },
+    favoriteButton: { padding: 5 },
+    emptyText: { textAlign: "center", marginTop: 20, fontSize: 16, color: "gray" },
 });

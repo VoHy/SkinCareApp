@@ -1,53 +1,49 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
 import Header from "../components/Header";
 import ProductItem from "../components/ProductItem";
 import FakeData from "../utils/FakeData";
 
 export default function HomeScreen({ navigation }) {
-    const [products, setProducts] = useState(FakeData);
-    const [favorites, setFavorites] = useState([]); // Đảm bảo favorites là mảng
+    const [favorites, setFavorites] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [filteredData, setFilteredData] = useState(FakeData);
 
-    // Load danh sách yêu thích từ AsyncStorage khi mở ứng dụng
-    useEffect(() => {
-        const loadFavorites = async () => {
-            try {
-                const storedFavorites = await AsyncStorage.getItem("favorites");
-                if (storedFavorites) {
-                    setFavorites(JSON.parse(storedFavorites));
+    // Load favorites khi màn hình được focus
+    useFocusEffect(
+        useCallback(() => {
+            const loadFavorites = async () => {
+                try {
+                    const storedFavorites = await AsyncStorage.getItem("favorites");
+                    setFavorites(storedFavorites ? JSON.parse(storedFavorites) : []);
+                } catch (error) {
+                    console.error("Error loading favorites:", error);
                 }
-            } catch (error) {
-                console.error("Error loading favorites:", error);
-            }
-        };
-        loadFavorites();
-    }, []);
+            };
+            loadFavorites();
+        }, [])
+    );
 
-    // Lưu danh sách yêu thích vào AsyncStorage khi thay đổi
-    useEffect(() => {
-        AsyncStorage.setItem("favorites", JSON.stringify(favorites));
-    }, [favorites]);
+    // Toggle Favorite
+    const toggleFavorite = async (item) => {
+        setFavorites((prevFavorites) => {
+            let updatedFavorites;
+            if (prevFavorites.some((fav) => fav.id === item.id)) {
+                updatedFavorites = prevFavorites.filter((fav) => fav.id !== item.id);
+            } else {
+                updatedFavorites = [...prevFavorites, item];
+            }
+
+            AsyncStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+            return updatedFavorites;
+        });
+    };
 
     // Xử lý khi nhấn vào sản phẩm
     const handleProductPress = (item) => {
         navigation.navigate("DetailsScreen", { item });
-    };
-
-    // Xử lý yêu thích sản phẩm
-    const handleFavorite = (item) => {
-        setFavorites((prevFavorites) => {
-            if (!Array.isArray(prevFavorites)) return []; // Đảm bảo prevFavorites là mảng hợp lệ
-
-            const isFav = prevFavorites.find((fav) => fav.id === item.id);
-            if (isFav) {
-                return prevFavorites.filter((fav) => fav.id !== item.id); // Xóa nếu đã tồn tại
-            } else {
-                return [...prevFavorites, item]; // Thêm nếu chưa có
-            }
-        });
     };
 
     // Xử lý tìm kiếm
@@ -69,12 +65,12 @@ export default function HomeScreen({ navigation }) {
 
             <FlatList
                 data={filteredData}
-                keyExtractor={(item) => item.id.toString()}
+                keyExtractor={(item) => (item.id ? item.id.toString() : Math.random().toString())}
                 renderItem={({ item }) => (
                     <ProductItem
                         item={item}
                         onPress={handleProductPress}
-                        onFavorite={() => handleFavorite(item)}
+                        onFavorite={() => toggleFavorite(item)}
                         isFavorite={favorites.some((fav) => fav.id === item.id)}
                     />
                 )}
