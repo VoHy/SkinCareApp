@@ -1,14 +1,11 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import MenuScreen from './components/MenuScreen';
 import HomeScreen from './components/HomeScreen';
-import Login from './components/Login';
 import Detail from './components/Details';
 import Favorite from './components/Favorite';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default function App() {
   return (
@@ -22,7 +19,7 @@ const MyStack = () => {
   const Stack = createStackNavigator();
   return (
     <Stack.Navigator screenOptions={{ headerStyle: { backgroundColor: 'red' } }} >
-      <Stack.Screen name="Top" component={MyBottomTabs} options={{ headerShown: false }}/>
+      <Stack.Screen name="Top" component={MyBottomTabs} options={{ headerShown: false }} />
       <Stack.Screen name="Details" component={Detail} />
     </Stack.Navigator>
   )
@@ -31,11 +28,26 @@ const MyStack = () => {
 const MyBottomTabs = () => {
   const Tabs = createBottomTabNavigator();
   return (
-    <Tabs.Navigator>
+    <Tabs.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ color, size }) => {
+          let iconName;
+
+          if (route.name === 'Home') {
+            iconName = 'home';
+          } else if (route.name === 'Favorite') {
+            iconName = 'heart';
+          }
+
+          return <Icon name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: 'red',
+        tabBarInactiveTintColor: 'gray',
+        tabBarStyle: { backgroundColor: 'white' },
+      })}
+    >
       <Tabs.Screen name="Home" component={HomeScreen} />
-      <Tabs.Screen name="Menu" component={MenuScreen} />
       <Tabs.Screen name="Favorite" component={Favorite} />
-      {/* <Tabs.Screen name="Login" component={Login} /> */}
     </Tabs.Navigator>
-  )
+  );
 }
