@@ -1,64 +1,65 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { View, Text, Image, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const Detail = ({ route }) => {
   const { item } = route.params;
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [favorites, setFavorites] = useState({});
 
   const hasDiscount = item.limitedTimeDeal && item.limitedTimeDeal < item.price;
   const discountPercent = hasDiscount
     ? Math.round(((item.price - item.limitedTimeDeal) / item.price) * 100)
     : 0;
 
-  // Load favorite status from AsyncStorage
-  useEffect(() => {
-    const loadFavoriteStatus = async () => {
-      try {
-        const storedFavorites = await AsyncStorage.getItem('favorites');
-        const favorites = storedFavorites ? JSON.parse(storedFavorites) : {};
-        setIsFavorite(favorites[item.id] || false);
-      } catch (error) {
-        console.error("Error loading favorites:", error);
-      }
-    };
+  useFocusEffect(
+    useCallback(() => {
+      const loadFavorites = async () => {
+        try {
+          const storedFavorites = await AsyncStorage.getItem('favorites');
+          setFavorites(storedFavorites ? JSON.parse(storedFavorites) : {});
+        } catch (error) {
+          console.error("Error loading favorites:", error);
+        }
+      };
+      loadFavorites();
+    }, [])
+  );
 
-    loadFavoriteStatus();
-  }, [item.id]);
+  const toggleFavorite = async (item) => {
+    const updatedFavorites = { ...favorites };
 
-  // Toggle favorite status
-  const toggleFavorite = async () => {
+    if (updatedFavorites[item.id]) {
+      delete updatedFavorites[item.id];
+    } else {
+      updatedFavorites[item.id] = item;
+    }
+
+    setFavorites(updatedFavorites);
+
     try {
-      const storedFavorites = await AsyncStorage.getItem('favorites');
-      let favorites = storedFavorites ? JSON.parse(storedFavorites) : {};
-
-      if (favorites[item.id]) {
-        delete favorites[item.id]; // Remove from favorites
-        setIsFavorite(false);
-      } else {
-        favorites[item.id] = true; // Add to favorites
-        setIsFavorite(true);
-      }
-
-      await AsyncStorage.setItem('favorites', JSON.stringify(favorites));
+      await AsyncStorage.setItem('favorites', JSON.stringify(updatedFavorites));
     } catch (error) {
-      console.error("Error updating favorites:", error);
+      console.error("Error saving favorites:", error);
     }
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{item.artName}</Text>
-      
+
       <View style={styles.imageContainer}>
         <Image source={{ uri: item.image }} style={styles.image} />
-        <TouchableOpacity onPress={toggleFavorite} style={styles.favoriteButton}>
-          <Icon name={isFavorite ? "heart" : "heart-o"} size={30} color={isFavorite ? "red" : "gray"} />
+        <TouchableOpacity onPress={() => toggleFavorite(item)} style={styles.favoriteButton}>
+          <Icon
+            name={favorites[item.id] ? "heart" : "heart-o"}
+            size={24}
+            color={favorites[item.id] ? "red" : "white"}
+          />
         </TouchableOpacity>
       </View>
 
-      {/* Hiển thị giá */}
       <View style={styles.priceContainer}>
         {hasDiscount ? (
           <>
@@ -73,7 +74,6 @@ const Detail = ({ route }) => {
 
       <Text style={styles.description}>{item.description}</Text>
 
-      {/* Display Feedback */}
       <Text style={styles.feedbackTitle}>Feedback</Text>
       {item.feedbacks && item.feedbacks.length > 0 ? (
         <FlatList
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 10,
     right: 10,
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    backgroundColor: 'rgba(96, 24, 24, 0.7)',
     borderRadius: 20,
     padding: 5,
   },

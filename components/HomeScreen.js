@@ -1,4 +1,4 @@
-import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, Image, StyleSheet, TextInput } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, Image, StyleSheet, ScrollView } from 'react-native';
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
@@ -8,10 +8,10 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 export default function HomeScreen() {
     const navigation = useNavigation();
     const [data, setData] = useState([]);
-    const [filteredData, setFilteredData] = useState([]);
     const [favorites, setFavorites] = useState({});
     const [loading, setLoading] = useState(true);
-    const [searchBrand, setSearchBrand] = useState('');
+    const [filter, setFilter] = useState('All');
+    const [filteredData, setFilteredData] = useState([]);
 
     const fetchData = async () => {
         try {
@@ -46,7 +46,7 @@ export default function HomeScreen() {
                 const storedData = await AsyncStorage.getItem('artData');
                 if (storedData) {
                     setData(JSON.parse(storedData));
-                    setFilteredData(JSON.parse(storedData));
+                    // setFilteredData(JSON.parse(storedData));
                 } else {
                     fetchData();
                 }
@@ -78,26 +78,27 @@ export default function HomeScreen() {
         }
     };
 
-    const handleSearch = (text) => {
-        setSearchBrand(text);
-        if (text) {
-            const filtered = data.filter((item) =>
-                item.brand?.toLowerCase().includes(text.toLowerCase())
-            );
-            setFilteredData(filtered);
-        } else {
-            setFilteredData(data);
-        }
-    };
-
+    // Lọc danh mục sản phẩm
+    const filteredArt = data.filter(item =>
+        filter === 'All' || (item.brand && item.brand.toLowerCase() === filter.toLowerCase())
+    );
     return (
         <View style={styles.container}>
-            <TextInput
-                style={styles.searchInput}
-                placeholder={"Tìm kiếm theo thương hiệu..."}
-                value={searchBrand}
-                onChangeText={handleSearch}
-            />
+            {!loading && (
+                <View style={styles.filterContainer}>
+                    <ScrollView horizontal showsHorizontalScrollIndicator={true}>
+                        {['All', 'Arteza', 'Color Splash', 'Edding', 'KingArt'].map((brand) => (
+                            <TouchableOpacity
+                                key={String(brand)}
+                                style={[styles.filterButton, filter === brand && styles.selectedButton]}
+                                onPress={() => setFilter(brand)}
+                            >
+                                <Text style={styles.filterText}>{brand || 'Unknown'}</Text>
+                            </TouchableOpacity>
+                        ))}
+                    </ScrollView>
+                </View>
+            )}
 
             {loading ? (
                 <View style={styles.loadingContainer}>
@@ -105,7 +106,7 @@ export default function HomeScreen() {
                 </View>
             ) : (
                 <FlatList
-                    data={filteredData}
+                    data={filteredArt}
                     keyExtractor={(item) => String(item.id)}
                     numColumns={2}
                     renderItem={({ item }) => {
@@ -130,10 +131,9 @@ export default function HomeScreen() {
                                             />
                                         </TouchableOpacity>
                                     </View>
-                                    <Text style={styles.artName}>{item.artName}</Text>
-
+                                    <Text style={styles.artName}>{item.artName || 'No Name'}</Text>
                                     <Text style={[styles.price, hasDiscount && styles.priceStrikethrough]}>
-                                        {item.price}$
+                                        {`${item.price || 'N/A'}$`}
                                     </Text>
 
                                     {hasDiscount && (
@@ -154,26 +154,15 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#fff', padding: 10 },
-    searchInput: {
-        height: 40,
-        borderColor: '#ccc',
-        borderWidth: 1,
-        borderRadius: 8,
-        paddingHorizontal: 10,
-        marginBottom: 10,
-    },
+    filterContainer: { flexDirection: 'row', padding: 10 },
+    filterButton: { padding: 10, borderRadius: 5, marginRight: 5, backgroundColor: '#ccc' },
+    selectedButton: { backgroundColor: '#007bff' },
+    filterText: { color: '#fff' },
     loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-    itemContainer: {
-        flex: 1, margin: 8, maxWidth: '48%', alignItems: 'center',
-        backgroundColor: '#f9f9f9', borderRadius: 10, padding: 10
-    },
-    item: { alignItems: 'center', justifyContent: 'center' },
+    itemContainer: { flex: 1, margin: 8, maxWidth: '48%', alignItems: 'center', backgroundColor: '#f9f9f9', borderRadius: 10, padding: 10 },
     imageContainer: { position: 'relative', width: 150, height: 150 },
     image: { width: '100%', height: '100%', borderRadius: 10 },
-    favoriteButton: {
-        position: 'absolute', top: 8, right: 8,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)', padding: 5, borderRadius: 15
-    },
+    favoriteButton: { position: 'absolute', top: 8, right: 8, backgroundColor: 'rgba(0, 0, 0, 0.5)', padding: 5, borderRadius: 15 },
     artName: { fontSize: 16, fontWeight: 'bold', marginTop: 8 },
     price: { fontSize: 16, color: 'black', marginTop: 4 },
     priceStrikethrough: { textDecorationLine: 'line-through', color: 'gray' },
@@ -181,4 +170,3 @@ const styles = StyleSheet.create({
     limitedTimeDeal: { fontSize: 16, fontWeight: 'bold', color: 'red', marginRight: 5 },
     discountText: { fontSize: 14, fontWeight: 'bold', color: 'green' },
 });
-

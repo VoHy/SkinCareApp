@@ -1,5 +1,5 @@
 import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -9,41 +9,35 @@ export default function Favorite() {
   const [favorites, setFavorites] = useState({});
 
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       const loadFavorites = async () => {
         try {
           const storedFavorites = await AsyncStorage.getItem('favorites');
-          const parsedFavorites = storedFavorites ? JSON.parse(storedFavorites) : {};
-
-          // Lọc bỏ dữ liệu không hợp lệ
-          const validFavorites = Object.fromEntries(
-            Object.entries(parsedFavorites).filter(([key, value]) => value && value.id)
-          );
-
-          setFavorites(validFavorites);
+          setFavorites(storedFavorites ? JSON.parse(storedFavorites) : {});
         } catch (error) {
           console.error("Error loading favorites:", error);
         }
       };
-
       loadFavorites();
     }, [])
   );
 
-  const removeFavorite = async (itemId) => {
-    if (!itemId) return;
-
+  const toggleFavorite = async (item) => {
     const updatedFavorites = { ...favorites };
-    delete updatedFavorites[itemId];
 
-    // Lưu lại danh sách mới vào AsyncStorage
-    if (Object.keys(updatedFavorites).length > 0) {
-      await AsyncStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+    if (updatedFavorites[item.id]) {
+      delete updatedFavorites[item.id];
     } else {
-      await AsyncStorage.removeItem('favorites'); // Xóa nếu danh sách trống
+      updatedFavorites[item.id] = item;
     }
 
     setFavorites(updatedFavorites);
+
+    try {
+      await AsyncStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+    } catch (error) {
+      console.error("Error saving favorites:", error);
+    }
   };
 
   return (
@@ -74,9 +68,12 @@ export default function Favorite() {
                         : require('../assets/favicon.png')}
                       style={styles.image}
                     />
-
-                    <TouchableOpacity onPress={() => removeFavorite(item.id)} style={styles.favoriteButton}>
-                      <Icon name="trash" size={24} color="red" />
+                    <TouchableOpacity onPress={() => toggleFavorite(item)} style={styles.favoriteButton}>
+                      <Icon
+                        name={favorites[item.id] ? "heart" : "heart-o"}
+                        size={24}
+                        color={favorites[item.id] ? "red" : "white"}
+                      />
                     </TouchableOpacity>
                   </View>
 
