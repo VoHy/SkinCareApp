@@ -50,10 +50,9 @@ export default function Favorite() {
           keyExtractor={(item) => String(item.id)}
           numColumns={2}
           renderItem={({ item }) => {
-            const hasDiscount = item.limitedTimeDeal && item.limitedTimeDeal < item.price;
-            const discountPercent = hasDiscount
-              ? Math.round(((item.price - item.limitedTimeDeal) / item.price) * 100)
-              : 0;
+            const hasDiscount = item.limitedTimeDeal > 0 && item.limitedTimeDeal < 1;
+            const discountPercent = hasDiscount ? Math.round(item.limitedTimeDeal * 100) : 0;
+            const discountedPrice = hasDiscount ? (item.price * (1 - item.limitedTimeDeal)).toFixed(2) : item.price;
 
             return (
               <View style={styles.itemContainer}>
@@ -79,16 +78,20 @@ export default function Favorite() {
 
                   <Text style={styles.artName}>{item.artName}</Text>
 
-                  {/* Hiển thị giá */}
                   <View style={styles.priceContainer}>
                     {hasDiscount ? (
                       <>
-                        <Text style={styles.priceStrikethrough}>{item.price}$</Text>
-                        <Text style={styles.limitedTimeDeal}>{item.limitedTimeDeal}$</Text>
-                        <Text style={styles.discountText}>-{discountPercent}%</Text>
+                        <View style={styles.discountContainer}>
+                          <Text style={styles.limitedTimeDeal}>
+                            {`${discountedPrice}$`}
+                          </Text>
+                          <Text style={styles.discountText}>-{discountPercent}%</Text>
+                        </View>
                       </>
                     ) : (
-                      <Text style={styles.price}>{item.price}$</Text>
+                      <Text style={[styles.price, hasDiscount && styles.priceStrikethrough]}>
+                        {`${item.price || 'N/A'}$`}
+                      </Text>
                     )}
                   </View>
                 </TouchableOpacity>

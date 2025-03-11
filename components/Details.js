@@ -8,10 +8,9 @@ const Detail = ({ route }) => {
   const { item } = route.params;
   const [favorites, setFavorites] = useState({});
 
-  const hasDiscount = item.limitedTimeDeal && item.limitedTimeDeal < item.price;
-  const discountPercent = hasDiscount
-    ? Math.round(((item.price - item.limitedTimeDeal) / item.price) * 100)
-    : 0;
+  const hasDiscount = item.limitedTimeDeal > 0 && item.limitedTimeDeal < 1;
+  const discountPercent = hasDiscount ? Math.round(item.limitedTimeDeal * 100) : 0;
+  const discountedPrice = hasDiscount ? (item.price * (1 - item.limitedTimeDeal)).toFixed(2) : item.price;
 
   useFocusEffect(
     useCallback(() => {
@@ -63,9 +62,12 @@ const Detail = ({ route }) => {
       <View style={styles.priceContainer}>
         {hasDiscount ? (
           <>
-            <Text style={styles.priceStrikethrough}>{item.price}$</Text>
-            <Text style={styles.limitedTimeDeal}>{item.limitedTimeDeal}$</Text>
-            <Text style={styles.discountText}>-{discountPercent}%</Text>
+            <View style={styles.discountContainer}>
+              <Text style={styles.limitedTimeDeal}>
+                {`${discountedPrice}$`} 
+              </Text>
+              <Text style={styles.discountText}>-{discountPercent}%</Text>
+            </View>
           </>
         ) : (
           <Text style={styles.price}>{item.price}$</Text>
