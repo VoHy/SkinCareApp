@@ -41,14 +41,14 @@ const FakeData = [
         id: "3",
         name: "Toner Cấp Ẩm",
         price: 199000,
-        discount: 15,
+        discount: 0,
         isFeatured: true,
         image: require("../assets/Image/skincare6.png"),
         category: "Toner",
         description: "Toner dưỡng ẩm sâu, cân bằng độ pH và làm dịu da.",
         rating: 4.7,
         reviewCount: 2,
-        finalPrice: calculateFinalPrice(199000, 15),
+        finalPrice: calculateFinalPrice(199000, 0),
         stock: 10,
         feedback: [
             { id: "f5", user: "Thanh Hằng", comment: "Mùi thơm dễ chịu, dưỡng ẩm tốt.", rating: 5, date: "2024-03-12" },
@@ -77,14 +77,14 @@ const FakeData = [
         id: "5",
         name: "Mặt Nạ Đất Sét",
         price: 259000,
-        discount: 20,
+        discount: 0,
         isFeatured: false,
         image: require("../assets/Image/skincare5.png"),
         category: "Mặt Nạ",
         description: "Thải độc và làm sạch sâu, giúp da sáng mịn hơn.",
         rating: 4.9,
         reviewCount: 2,
-        finalPrice: calculateFinalPrice(259000, 20),
+        finalPrice: calculateFinalPrice(259000,0),
         stock: 18,
         feedback: [
             { id: "f9", user: "Phương Thảo", comment: "Da sáng hơn sau vài lần dùng!", rating: 5, date: "2024-03-07" },
@@ -95,74 +95,20 @@ const FakeData = [
         id: "6",
         name: "Kem Dưỡng Ban Đêm",
         price: 349500,
-        discount: 8,
+        discount: 0,
         isFeatured: false,
         image: require("../assets/Image/skincare3.png"),
         category: "Kem Dưỡng",
         description: "Dưỡng ẩm và phục hồi da khi ngủ, giúp da căng mọng.",
         rating: 4.8,
         reviewCount: 2,
-        finalPrice: calculateFinalPrice(349500, 8),
+        finalPrice: calculateFinalPrice(349500, 0),
         stock: 12,
         feedback: [
             { id: "f11", user: "Hồng Nhung", comment: "Da mềm hơn sau 1 tuần!", rating: 5, date: "2024-03-05" },
             { id: "f12", user: "Tiến Lộc", comment: "Dưỡng tốt nhưng hơi nhờn.", rating: 4, date: "2024-03-04" }
         ]
     },
-    {
-        id: "7",
-        name: "Gel Rửa Mặt Than Hoạt Tính",
-        price: 179000,
-        discount: 12,
-        isFeatured: false,
-        image: require("../assets/Image/skincare7.png"),
-        category: "Sữa Rửa Mặt",
-        description: "Làm sạch sâu, kiểm soát dầu và giúp da thông thoáng.",
-        rating: 4.6,
-        reviewCount: 2,
-        finalPrice: calculateFinalPrice(179000, 12),
-        stock: 30,
-        feedback: [
-            { id: "f13", user: "Vũ Hoàng", comment: "Làm sạch dầu nhờn tốt!", rating: 5, date: "2024-03-03" },
-            { id: "f14", user: "Quỳnh Trâm", comment: "Có cảm giác mát lạnh khi dùng.", rating: 4.5, date: "2024-03-02" }
-        ]
-    },
-    {
-        id: "8",
-        name: "Serum Vitamin C",
-        price: 329000,
-        discount: 18,
-        isFeatured: false,
-        image: require("../assets/Image/skincare8.png"),
-        category: "Serum",
-        description: "Giúp sáng da, mờ thâm và làm đều màu da.",
-        rating: 4.8,
-        reviewCount: 2,
-        finalPrice: calculateFinalPrice(329000, 18),
-        stock: 22,
-        feedback: [
-            { id: "f15", user: "Mỹ Linh", comment: "Da sáng hơn, thâm mờ đi nhanh.", rating: 5, date: "2024-03-01" },
-            { id: "f16", user: "Hà Minh", comment: "Hơi châm chích nhưng hiệu quả tốt.", rating: 4.5, date: "2024-02-28" }
-        ]
-    },
-    {
-        id: "9",
-        name: "Xịt Khoáng Tươi Mát",
-        price: 189000,
-        discount: 15,
-        isFeatured: false,
-        image: require("../assets/Image/skincare9.png"),
-        category: "Xịt Khoáng",
-        description: "Giữ ẩm, làm dịu da và bảo vệ khỏi ô nhiễm môi trường.",
-        rating: 4.7,
-        reviewCount: 2,
-        finalPrice: calculateFinalPrice(189000, 15),
-        stock: 28,
-        feedback: [
-            { id: "f17", user: "Tú Anh", comment: "Dùng cả ngày rất mát da!", rating: 5, date: "2024-02-27" },
-            { id: "f18", user: "Bảo Ngọc", comment: "Mùi dễ chịu, giữ ẩm ổn.", rating: 4.5, date: "2024-02-26" }
-        ]
-    }
 ];
 
 export default FakeData;
