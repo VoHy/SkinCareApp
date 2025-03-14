@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-export default function ProductItem({ item, onPress, onFavorite }) {
+export default function ProductItem({ item, onPress, onFavorite, isFavorite }) {
     return (
         <TouchableOpacity style={styles.container} onPress={() => onPress(item)}>
             {/* Hình ảnh sản phẩm */}
@@ -16,7 +16,7 @@ export default function ProductItem({ item, onPress, onFavorite }) {
 
             {/* Nút yêu thích */}
             <TouchableOpacity style={styles.favoriteButton} onPress={() => onFavorite(item)}>
-                <Icon name={item.isFavorite ? "heart" : "heart-o"} size={20} color={item.isFavorite ? "red" : "#999"} />
+                <Icon name={isFavorite ? "heart" : "heart-o"} size={20} color={isFavorite ? "red" : "#999"} />
             </TouchableOpacity>
         </TouchableOpacity>
     );

@@ -1,21 +1,19 @@
-// navigation/AppNavigator.js
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { View, Text, Image } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import HomeScreen from '../screens/HomeScreen';
 import FavoriteScreen from '../screens/FavoriteScreen';
-import Login from '../screens/Login';
+import LoginScreen from '../screens/Login';
+import ProfileScreen from '../screens/ProfileScreen';
 import DetailsScreen from '../screens/DetailsScreen';
 import CartScreen from '../screens/CartScreen';
-import Icon from 'react-native-vector-icons/FontAwesome';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-// Màn hình Bottom Tabs
-const BottomTabs = () => {
+const BottomTabs = ({ isLoggedIn, setIsLoggedIn }) => {
     return (
         <Tab.Navigator screenOptions={{ headerShown: false }}>
             <Tab.Screen
@@ -36,7 +34,6 @@ const BottomTabs = () => {
                     )
                 }}
             />
-
             <Tab.Screen
                 name="Cart"
                 component={CartScreen}
@@ -44,10 +41,11 @@ const BottomTabs = () => {
                     tabBarIcon: ({ color }) => (
                         <Icon name="shopping-cart" size={24} color={color} />
                     )
-                }} />
+                }}
+            />
             <Tab.Screen
                 name="Account"
-                component={Login}
+                children={() => isLoggedIn ? <ProfileScreen setIsLoggedIn={setIsLoggedIn} /> : <LoginScreen setIsLoggedIn={setIsLoggedIn} />}
                 options={{
                     tabBarIcon: ({ color, size }) => (
                         <Icon name="user" size={size} color={color} />
@@ -59,9 +57,21 @@ const BottomTabs = () => {
 };
 
 export default function AppNavigator() {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        AsyncStorage.getItem('isLoggedIn').then(value => {
+            if (value === 'true') setIsLoggedIn(true);
+        });
+    }, []);
+
     return (
         <Stack.Navigator>
-            <Stack.Screen name="Main" component={BottomTabs} options={{ headerShown: false }} />
+            <Stack.Screen 
+                name="Main" 
+                children={() => <BottomTabs isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />} 
+                options={{ headerShown: false }} 
+            />
             <Stack.Screen name="DetailsScreen" component={DetailsScreen} options={{ title: "Chi tiết sản phẩm" }} />
         </Stack.Navigator>
     );

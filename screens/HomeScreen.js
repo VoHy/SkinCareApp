@@ -7,39 +7,50 @@ import ProductItem from "../components/ProductItem";
 import FakeData from "../utils/FakeData";
 
 export default function HomeScreen({ navigation }) {
-    const [favorites, setFavorites] = useState([]);
+    const [favorites, setFavorites] = useState({});
     const [searchQuery, setSearchQuery] = useState("");
-    const [filteredData, setFilteredData] = useState(FakeData);
+    const [filteredData, setFilteredData] = useState([]);
 
-    // Load favorites khi màn hình được focus
-    const loadFavorites = useCallback(async () => {
-        try {
-            const storedFavorites = await AsyncStorage.getItem("favorites");
-            if (storedFavorites) {
-                const parsedFavorites = JSON.parse(storedFavorites);
-                if (Array.isArray(parsedFavorites)) {
-                    setFavorites(parsedFavorites);
-                } else {
-                    setFavorites([]);
+    // Load danh sách yêu thích từ AsyncStorage khi màn hình focus
+    useFocusEffect(
+        useCallback(() => {
+            const loadFavorites = async () => {
+                try {
+                    const storedFavorites = await AsyncStorage.getItem("favorites");
+                    setFavorites(storedFavorites ? JSON.parse(storedFavorites) : {});
+                } catch (error) {
+                    console.error("Error loading favorites:", error);
                 }
-            } else {
-                setFavorites([]);
-            }
-        } catch (error) {
-            console.error("Error loading favorites:", error);
+            };
+
+            loadFavorites();
+        }, [])
+    );
+
+    // Cập nhật danh sách sản phẩm khi searchQuery thay đổi
+    useEffect(() => {
+        if (!searchQuery.trim()) {
+            setFilteredData(FakeData);
+        } else {
+            const lowerCaseQuery = searchQuery.toLowerCase();
+            const filtered = FakeData.filter((item) =>
+                item.name.toLowerCase().includes(lowerCaseQuery)
+            );
+            setFilteredData(filtered);
         }
-    }, []);
+    }, [searchQuery]);
 
-    useFocusEffect(loadFavorites);
-
-    // Toggle Favorite
+    // Toggle trạng thái yêu thích
     const toggleFavorite = async (item) => {
         try {
             setFavorites((prevFavorites) => {
-                const isFavorite = prevFavorites.some((fav) => fav.id === item.id);
-                const updatedFavorites = isFavorite
-                    ? prevFavorites.filter((fav) => fav.id !== item.id)
-                    : [...prevFavorites, item];
+                const updatedFavorites = { ...prevFavorites };
+
+                if (updatedFavorites[item.id]) {
+                    delete updatedFavorites[item.id]; // Bỏ khỏi danh sách yêu thích
+                } else {
+                    updatedFavorites[item.id] = item; // Thêm vào danh sách yêu thích
+                }
 
                 AsyncStorage.setItem("favorites", JSON.stringify(updatedFavorites));
                 return updatedFavorites;
@@ -54,32 +65,23 @@ export default function HomeScreen({ navigation }) {
         navigation.navigate("DetailsScreen", { item });
     };
 
-    // Xử lý tìm kiếm với useEffect
-    useEffect(() => {
-        setFilteredData(
-            searchQuery.trim() === ""
-                ? FakeData
-                : FakeData.filter((item) =>
-                    item.name.toLowerCase().includes(searchQuery.toLowerCase())
-                )
-        );
-    }, [searchQuery]);
-
     return (
         <View style={styles.container}>
             <Header onSearch={setSearchQuery} onFilterPress={() => { }} />
 
             <FlatList
                 data={filteredData}
-                keyExtractor={(item) => item.id?.toString() ?? `item-${item.index}`}
+                keyExtractor={(item, index) => item.id?.toString() ?? `item-${index}`}
                 numColumns={2}
                 renderItem={({ item }) => (
                     <ProductItem
                         item={item}
                         onPress={handleProductPress}
                         onFavorite={() => toggleFavorite(item)}
-                        isFavorite={Array.isArray(favorites) && favorites.some((fav) => fav.id === item.id)} />
+                        isFavorite={!!favorites[item.id]}
+                    />
                 )}
+                showsVerticalScrollIndicator={false}
             />
         </View>
     );

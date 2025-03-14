@@ -3,18 +3,19 @@ import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from 'reac
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 
-export default function Login() {
+export default function Login({ setIsLoggedIn }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigation = useNavigation();
 
-    // Thông tin tài khoản cố định
     const fixedEmail = "admin@gmail.com";
     const fixedPassword = "123456";
 
     const handleLogin = async () => {
         if (email === fixedEmail && password === fixedPassword) {
             await AsyncStorage.setItem('userToken', 'fake-token-123456');
+            await AsyncStorage.setItem('isLoggedIn', 'true');
+            setIsLoggedIn(true); // <-- Cập nhật trạng thái đăng nhập
             Alert.alert("Thành công", "Đăng nhập thành công!");
             navigation.navigate("Home");
         } else {

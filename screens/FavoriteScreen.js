@@ -1,19 +1,19 @@
 import React, { useState, useCallback } from "react";
-import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet, Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useFocusEffect } from "@react-navigation/native";
 
 export default function FavoriteScreen() {
-    const [favorites, setFavorites] = useState([]);
+    const [favorites, setFavorites] = useState({});
 
-    // Load favorites khi màn hình được focus
+    // Load danh sách yêu thích từ AsyncStorage khi màn hình focus
     useFocusEffect(
         useCallback(() => {
             const loadFavorites = async () => {
                 try {
                     const storedFavorites = await AsyncStorage.getItem("favorites");
-                    setFavorites(storedFavorites ? JSON.parse(storedFavorites) : []);
+                    setFavorites(storedFavorites ? JSON.parse(storedFavorites) : {});
                 } catch (error) {
                     console.error("Error loading favorites:", error);
                 }
@@ -22,34 +22,48 @@ export default function FavoriteScreen() {
         }, [])
     );
 
-    // Toggle Favorite (Xóa khỏi danh sách yêu thích)
-    const toggleFavorite = async (item) => {
-        setFavorites((prevFavorites) => {
-            let updatedFavorites = prevFavorites.filter((fav) => fav.id !== item.id);
-            AsyncStorage.setItem("favorites", JSON.stringify(updatedFavorites));
-            return updatedFavorites;
-        });
+    // Xóa sản phẩm khỏi danh sách yêu thích
+    const removeFavorite = async (item) => {
+        try {
+            setFavorites((prevFavorites) => {
+                const updatedFavorites = { ...prevFavorites };
+                delete updatedFavorites[item.id]; // Xóa khỏi danh sách
+
+                AsyncStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+                return updatedFavorites;
+            });
+
+            Alert.alert("Thông báo", "Đã xóa khỏi danh sách yêu thích!");
+        } catch (error) {
+            console.error("Error updating favorites:", error);
+        }
     };
+
+    // Hiển thị danh sách yêu thích (chuyển object thành array)
+    const favoriteList = Object.values(favorites);
 
     return (
         <View style={styles.container}>
-            <FlatList
-                data={favorites}
-                keyExtractor={(item) => (item.id ? item.id.toString() : Math.random().toString())}
-                renderItem={({ item }) => (
-                    <View style={styles.itemContainer}>
-                        <Image source={item.image} style={styles.image} />
-                        <View style={styles.textContainer}>
-                            <Text style={styles.name}>{item.name}</Text>
-                            <Text style={styles.price}>{item.price}$</Text>
+            {favoriteList.length === 0 ? (
+                <Text style={styles.emptyText}>Chưa có sản phẩm yêu thích!</Text>
+            ) : (
+                <FlatList
+                    data={favoriteList}
+                    keyExtractor={(item) => item.id.toString()}
+                    renderItem={({ item }) => (
+                        <View style={styles.itemContainer}>
+                            <Image source={item.image} style={styles.image} />
+                            <View style={styles.textContainer}>
+                                <Text style={styles.name}>{item.name}</Text>
+                                <Text style={styles.price}>{item.price}đ</Text>
+                            </View>
+                            <TouchableOpacity onPress={() => removeFavorite(item)} style={styles.favoriteButton}>
+                                <Icon name="heart" size={24} color="red" />
+                            </TouchableOpacity>
                         </View>
-                        <TouchableOpacity onPress={() => toggleFavorite(item)} style={styles.favoriteButton}>
-                            <Icon name="heart" size={24} color="red" />
-                        </TouchableOpacity>
-                    </View>
-                )}
-                ListEmptyComponent={<Text style={styles.emptyText}>No favorites yet!</Text>}
-            />
+                    )}
+                />
+            )}
         </View>
     );
 }
