@@ -46,7 +46,7 @@ const BottomTabs = () => {
                     )
                 }} />
             <Tab.Screen
-                name="Login"
+                name="Account"
                 component={Login}
                 options={{
                     tabBarIcon: ({ color, size }) => (

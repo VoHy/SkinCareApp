@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default function DetailsScreen({ route }) {
-    const { item } = route.params; // Nhận dữ liệu sản phẩm từ HomeScreen
+    const { item } = route.params; 
     const [isFavorite, setIsFavorite] = useState(false);
 
     useEffect(() => {

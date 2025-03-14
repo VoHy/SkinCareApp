@@ -44,14 +44,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        backgroundColor: '#FF6F61',
-        padding: 10, 
-        
+        backgroundColor: '#bebebe',
+        padding: 10,
+
     },
     logo: {
-        width: 100,
+        width: 50,
         height: 40,
-        resizeMode: 'contain',
+        marginLef: 20,
     },
     searchContainer: {
         flex: 1,
